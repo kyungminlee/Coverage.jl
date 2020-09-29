@@ -157,8 +157,9 @@ module Codecov
                 pull_request = pull_request,
                 job          = ENV["GITHUB_RUN_ID"],
                 slug         = ENV["GITHUB_REPOSITORY"],
-                build        = ENv["GITHUB_RUN_NUMBER"],
+                build        = ENV["GITHUB_RUN_NUMBER"],
             )
+            @show kwargs
         else
             error("No compatible CI platform detected")
         end
