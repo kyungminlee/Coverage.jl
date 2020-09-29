@@ -144,12 +144,16 @@ module Codecov
             if startswith(ref, "refs/heads/")
                 branch = ref[12:end]
                 pull_request = ""
-            elseif startswith(ref, "refs/pull")
+            elseif startswith(ref, "refs/pull/")
                 branch = ENV["GITHUB_HEAD_REF"]
                 pull_request = split(ref, "/")[3]
+            elseif startswith(ref, "refs/tags/")
+                branch = ref[11:end]
+                pull_request = ""
             else
                 error("Unsupported GitHub Action ref $ref")            
             end
+        
             kwargs = set_defaults(kwargs,
                 service      = "custom",
                 branch       = branch,
