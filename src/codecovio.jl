@@ -165,7 +165,7 @@ module Codecov
                 slug         = ENV["GITHUB_REPOSITORY"],
                 build        = ENV["GITHUB_RUN_NUMBER"],
                 tag          = tag,
-                build_url    = "$(ENV["GITHUB_SERVER_URL"])/$(ENV["GITHUB_REPOSITORY"])/runs/$(ENV["GITHUB_RUN_ID"])",
+                build_url    = "$(ENV["GITHUB_SERVER_URL"])/$(ENV["GITHUB_REPOSITORY"])/actions/runs/$(ENV["GITHUB_RUN_ID"])",
             )
             @show kwargs
         else
