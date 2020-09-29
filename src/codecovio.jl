@@ -144,7 +144,7 @@ module Codecov
             if startswith(ref, "refs/heads/")
                 branch = ref[12:end]
                 pull_request = ""
-            elseif startwith(ref, "refs/pull")
+            elseif startswith(ref, "refs/pull")
                 branch = ENV["GITHUB_HEAD_REF"]
                 pull_request = split(ref, "/")[3]
             else
