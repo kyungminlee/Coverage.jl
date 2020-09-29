@@ -140,10 +140,24 @@ module Codecov
                 build        = ENV["BUILD_BUILDID"],
             )
         elseif haskey(ENV, "GITHUB_ACTION") # GitHub Actions
+            ref = get(ENV, "GITHUB_REF", "")
+            if startswith(ref, "refs/heads/")
+                branch = ref[12:end]
+                pull_request = ""
+            elseif startwith(ref, "refs/pull")
+                branch = ENV["GITHUB_HEAD_REF"]
+                pull_request = split(ref, "/")[3]
+            else
+                error("Unsupported GitHub Action ref $ref")            
+            end
             kwargs = set_defaults(kwargs,
                 service      = "custom",
+                branch       = branch,
                 commit       = ENV["GITHUB_SHA"],
+                pull_request = pull_request,
+                job          = ENV["GITHUB_RUN_ID"],
                 slug         = ENV["GITHUB_REPOSITORY"],
+                build        = ENv["GITHUB_RUN_NUMBER"],
             )
         else
             error("No compatible CI platform detected")
