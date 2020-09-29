@@ -85,7 +85,7 @@ module Codecov
                 service      = "appveyor",
                 branch       = ENV["APPVEYOR_REPO_BRANCH"],
                 commit       = ENV["APPVEYOR_REPO_COMMIT"],
-                pull_request = appveyor_pr,
+                pr           = appveyor_pr,
                 job          = appveyor_job,
                 slug         = ENV["APPVEYOR_REPO_NAME"],
                 build        = ENV["APPVEYOR_JOB_ID"],
@@ -95,7 +95,7 @@ module Codecov
                 service      = "travis-org",
                 branch       = ENV["TRAVIS_BRANCH"],
                 commit       = ENV["TRAVIS_COMMIT"],
-                pull_request = ENV["TRAVIS_PULL_REQUEST"],
+                pr           = ENV["TRAVIS_PULL_REQUEST"],
                 job          = ENV["TRAVIS_JOB_ID"],
                 slug         = ENV["TRAVIS_REPO_SLUG"],
                 build        = ENV["TRAVIS_JOB_NUMBER"],
@@ -112,7 +112,7 @@ module Codecov
                 service      = "circleci",
                 branch       = ENV["CIRCLE_BRANCH"],
                 commit       = ENV["CIRCLE_SHA1"],
-                pull_request = get(ENV, "CIRCLE_PR_NUMBER", "false"),  # like Travis
+                pr           = get(ENV, "CIRCLE_PR_NUMBER", "false"),  # like Travis
                 build_url    = ENV["CIRCLE_BUILD_URL"],
                 slug         = circle_slug,
                 build        = ENV["CIRCLE_BUILD_NUM"],
@@ -134,22 +134,24 @@ module Codecov
                 service      = "azure_pipelines",
                 branch       = branch,
                 commit       = ENV["BUILD_SOURCEVERSION"],
-                pull_request = get(ENV, "SYSTEM_PULLREQUEST_PULLREQUESTNUMBER", ""),
+                pr           = get(ENV, "SYSTEM_PULLREQUEST_PULLREQUESTNUMBER", ""),
                 job          = ENV["BUILD_DEFINITIONNAME"],
                 slug         = ENV["BUILD_REPOSITORY_NAME"],
                 build        = ENV["BUILD_BUILDID"],
             )
         elseif haskey(ENV, "GITHUB_ACTION") # GitHub Actions
+            branch = ""
+            pr = ""
+            tag = ""
             ref = get(ENV, "GITHUB_REF", "")
             if startswith(ref, "refs/heads/")
                 branch = ref[12:end]
-                pull_request = ""
             elseif startswith(ref, "refs/pull/")
                 branch = ENV["GITHUB_HEAD_REF"]
-                pull_request = split(ref, "/")[3]
+                pr = split(ref, "/")[3]
             elseif startswith(ref, "refs/tags/")
-                branch = ref[11:end]
-                pull_request = ""
+                branch = ENV["GITHUB_HEAD_REF"]
+                tag = ref[11:end]
             else
                 error("Unsupported GitHub Action ref $ref")            
             end
@@ -158,10 +160,11 @@ module Codecov
                 service      = "custom",
                 branch       = branch,
                 commit       = ENV["GITHUB_SHA"],
-                pull_request = pull_request,
+                pr           = pr,
                 job          = ENV["GITHUB_RUN_ID"],
                 slug         = ENV["GITHUB_REPOSITORY"],
                 build        = ENV["GITHUB_RUN_NUMBER"],
+                tag          = tag,
             )
             @show kwargs
         else
