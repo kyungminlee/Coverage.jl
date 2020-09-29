@@ -150,7 +150,7 @@ module Codecov
                 branch = ENV["GITHUB_HEAD_REF"]
                 pr = split(ref, "/")[3]
             elseif startswith(ref, "refs/tags/")
-                branch = ENV["GITHUB_HEAD_REF"]
+                branch = ref[11:end]
                 tag = ref[11:end]
             else
                 error("Unsupported GitHub Action ref $ref")            
